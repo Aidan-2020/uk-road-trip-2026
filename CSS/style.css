@@ -322,6 +322,26 @@ a.day{
 
 }
 
+.tag.map-btn{
+
+    color:#559cff;
+
+    border:1px solid #559cff;
+
+    text-decoration:none;
+
+    cursor:pointer;
+
+}
+
+.tag.map-btn:hover{
+
+    background:#559cff;
+
+    color:white;
+
+}
+
 .stars{
 
     color:#559cff;
