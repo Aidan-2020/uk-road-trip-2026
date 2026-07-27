@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Budget - UK Road Trip 2026</title>
+
+    <link rel="stylesheet" href="CSS/style.css">
+</head>
+
+<body>
+
+    <nav class="site-nav">
+        <div class="nav-inner">
+            <a class="nav-logo" href="index.html">🇬🇧 UK 2026</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="itinerary.html">Itinerary</a>
+                <a href="budget.html" class="active">Budget</a>
+                <a href="map.html">Maps</a>
+                <a href="packing.html">Packing</a>
+                <a href="restaurants.html">Restaurants</a>
+                <a href="hikes.html">Hikes</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>💷 Budget</h1>
+        <p class="subtitle">Add costs as you book them — totals update automatically</p>
+    </div>
+
+    <section>
+
+        <div class="budget-summary">
+
+            <div class="summary-card">
+                <span class="label">Total Cost</span>
+                <span class="value" id="total-cost">£0</span>
+            </div>
+
+            <div class="summary-card">
+                <span class="label">Per Person</span>
+                <span class="value" id="per-person-cost">£0</span>
+                <div class="people-control">
+                    <button type="button" id="people-minus">−</button>
+                    <span id="people-count">3</span>
+                    <button type="button" id="people-plus">+</button>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <span class="label">Items Logged</span>
+                <span class="value" id="item-count">0</span>
+            </div>
+
+        </div>
+
+        <form class="expense-form" id="expense-form">
+
+            <div>
+                <label for="exp-name">What</label>
+                <input type="text" id="exp-name" placeholder="e.g. Fallow dinner" required>
+            </div>
+
+            <div>
+                <label for="exp-category">Category</label>
+                <select id="exp-category">
+                    <option>Lodging</option>
+                    <option>Food</option>
+                    <option>Attractions</option>
+                    <option>Transport</option>
+                    <option>Other</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="exp-cost">Cost (£)</label>
+                <input type="number" id="exp-cost" min="0" step="0.01" required>
+            </div>
+
+            <div>
+                <label for="exp-split">Split ways</label>
+                <input type="number" id="exp-split" min="1" value="3" required>
+            </div>
+
+            <div>
+                <button type="submit">Add</button>
+            </div>
+
+        </form>
+
+        <div class="expense-list" id="expense-list">
+            <!-- rows injected by budget.js -->
+        </div>
+
+    </section>
+
+    <footer>
+        Built with ❤️ for the greatest UK road trip imaginable.
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/budget.js"></script>
+
+</body>
+
+</html>
