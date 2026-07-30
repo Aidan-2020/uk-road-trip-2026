@@ -742,6 +742,18 @@ footer{
 
 }
 
+.expense-row.skipped{
+
+    opacity:.45;
+
+}
+
+.expense-row.skipped .cost,.expense-row.skipped div:first-child{
+
+    text-decoration:line-through;
+
+}
+
 @media (max-width:800px){
 
     .expense-form,.expense-row{
