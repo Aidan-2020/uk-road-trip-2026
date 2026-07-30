@@ -39,6 +39,7 @@ const CATEGORY_ICON = {
 
 let manualExpenses = []; // synced from Firestore "expenses" collection
 let itineraryItems = []; // pulled from itinerary.html, read-only
+let excludedNames = []; // itinerary item names someone has marked "skip" — synced
 let people = 3; // synced from Firestore "settings/people"
 
 // ---------- Pull priced items straight from itinerary.html ----------
@@ -88,6 +89,30 @@ async function ensurePeopleDocExists() {
     }
 }
 
+// ---------- Firestore: excluded itinerary items (shared "skip this" toggle) ----------
+
+const excludedDocRef = doc(db, "settings", "excludedItineraryItems");
+
+onSnapshot(excludedDocRef, (snap) => {
+    excludedNames = snap.exists() ? snap.data().names || [] : [];
+    render();
+});
+
+async function ensureExcludedDocExists() {
+    const snap = await getDoc(excludedDocRef);
+    if (!snap.exists()) {
+        await setDoc(excludedDocRef, { names: [] });
+    }
+}
+
+window.toggleItineraryItem = async function (name) {
+    const isExcluded = excludedNames.includes(name);
+    const updated = isExcluded
+        ? excludedNames.filter((n) => n !== name)
+        : [...excludedNames, name];
+    await setDoc(excludedDocRef, { names: updated });
+};
+
 // ---------- Rendering ----------
 
 function escapeHtml(str) {
@@ -101,14 +126,15 @@ function render() {
     document.getElementById("people-count").textContent = people;
 
     const itineraryRows = itineraryItems.map((item) => {
+        const isSkipped = excludedNames.includes(item.name);
         const total = item.perPerson * people;
         return `
-        <div class="expense-row">
+        <div class="expense-row ${isSkipped ? "skipped" : ""}">
             <div>🗓️ ${escapeHtml(item.name)}</div>
-            <div><span class="cat-tag">From itinerary</span></div>
+            <div><span class="cat-tag">${isSkipped ? "Skipped" : "From itinerary"}</span></div>
             <div class="cost">£${total.toFixed(2)}</div>
             <div class="per-person">£${item.perPerson.toFixed(2)} / person</div>
-            <div></div>
+            <button class="delete-btn" onclick="window.toggleItineraryItem('${item.name.replace(/'/g, "\\'")}')" title="${isSkipped ? "Include again" : "Skip this — we're not doing it"}">${isSkipped ? "↺" : "✕"}</button>
         </div>`;
     });
 
@@ -130,7 +156,9 @@ function render() {
         ? allRows.join("")
         : '<div class="empty-state">No expenses yet — add your first one above.</div>';
 
-    const itineraryTotal = itineraryItems.reduce((sum, i) => sum + i.perPerson * people, 0);
+    const itineraryTotal = itineraryItems
+        .filter((i) => !excludedNames.includes(i.name))
+        .reduce((sum, i) => sum + i.perPerson * people, 0);
     const manualTotal = manualExpenses.reduce((sum, e) => sum + Number(e.cost), 0);
     const total = itineraryTotal + manualTotal;
 
@@ -174,4 +202,5 @@ document.getElementById("people-minus").addEventListener("click", async function
 
 document.getElementById("exp-split").value = people;
 ensurePeopleDocExists();
+ensureExcludedDocExists();
 loadItineraryItems();
